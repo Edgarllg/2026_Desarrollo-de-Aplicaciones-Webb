@@ -1,0 +1,102 @@
+body {
+    background-color: #f8f9fa;
+}
+
+table td, table th {
+    vertical-align: middle;
+}
+
+.navbar-brand {
+    font-weight: bold;
+}
+
+/* ===== Panel (dashboard) ===== */
+.dashboard-header {
+    background: linear-gradient(135deg, #1a2a6c, #2563eb);
+}
+
+.stat-card {
+    border-radius: 1rem;
+    transition: transform 0.15s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-3px);
+}
+
+.stat-icon {
+    width: 56px;
+    height: 56px;
+    border-radius: 0.9rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    flex-shrink: 0;
+}
+
+/* ===== Landing pública ===== */
+.hero {
+    background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+}
+
+.service-card {
+    border-radius: 1rem;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.service-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 .5rem 1rem rgba(0,0,0,.1) !important;
+}
+
+.service-icon {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.6rem;
+}
+
+/* ===== Íconos de productos (reemplazan fotos de vehículos) ===== */
+.icon-circle {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+}
+
+/* ===== Franja de tipos de vehículo en el hero ===== */
+.hero-fleet-icon {
+    width: 70px;
+    height: 70px;
+    border-radius: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.8rem;
+    background: rgba(255, 255, 255, 0.12);
+    backdrop-filter: blur(4px);
+    transition: transform 0.15s ease, background 0.15s ease;
+}
+
+.hero-fleet-icon:hover {
+    transform: translateY(-4px);
+    background: rgba(255, 255, 255, 0.22);
+}
+
+/* ===== Insignias "Por qué elegirnos" ===== */
+.why-icon {
+    width: 58px;
+    height: 58px;
+    border-radius: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+}

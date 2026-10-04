@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% block title %}{% if modo == 'editar' %}Editar Cliente{% else %}Nuevo Cliente{% endif %} - AutoDrive{% endblock %}
+{% block content %}
+
+<h2 class="mb-4">{% if modo == 'editar' %}Editar Cliente{% else %}Registrar Cliente{% endif %}</h2>
+
+<form method="POST" novalidate>
+    {{ form.hidden_tag() }}
+    <div class="mb-3">
+        {{ form.nombre.label(class="form-label") }}
+        {{ form.nombre(class="form-control") }}
+        {% for error in form.nombre.errors %}<div class="text-danger small">{{ error }}</div>{% endfor %}
+    </div>
+    <div class="mb-3">
+        {{ form.correo.label(class="form-label") }}
+        {{ form.correo(class="form-control") }}
+        {% for error in form.correo.errors %}<div class="text-danger small">{{ error }}</div>{% endfor %}
+    </div>
+    <div class="mb-3">
+        {{ form.telefono.label(class="form-label") }}
+        {{ form.telefono(class="form-control") }}
+        {% for error in form.telefono.errors %}<div class="text-danger small">{{ error }}</div>{% endfor %}
+    </div>
+    <a href="{{ url_for('clientes') }}" class="btn btn-secondary">Cancelar</a>
+    {{ form.submit(class="btn btn-primary") }}
+</form>
+
+{% endblock %}

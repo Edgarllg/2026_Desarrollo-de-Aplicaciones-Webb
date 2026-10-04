@@ -1,0 +1,252 @@
+{% extends 'base.html' %}
+{% block title %}Inicio - AutoDrive{% endblock %}
+{% block content %}
+
+{% if stats %}
+{# ======================= PANEL (usuario autenticado) ======================= #}
+
+<div class="dashboard-header rounded-4 p-4 mb-4 text-white">
+    <h1 class="h3 mb-1"><i class="bi bi-speedometer2"></i> Panel de Control</h1>
+    <p class="mb-0 opacity-75">Resumen general del concesionario AutoDrive</p>
+</div>
+
+<div class="row g-3 mb-4">
+    <div class="col-6 col-md-3">
+        <div class="card stat-card border-0 shadow-sm h-100">
+            <div class="card-body d-flex align-items-center gap-3">
+                <div class="stat-icon bg-primary-subtle text-primary"><i class="bi bi-car-front-fill"></i></div>
+                <div>
+                    <div class="fs-3 fw-bold">{{ stats.productos }}</div>
+                    <div class="text-muted small">Vehículos</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-md-3">
+        <div class="card stat-card border-0 shadow-sm h-100">
+            <div class="card-body d-flex align-items-center gap-3">
+                <div class="stat-icon bg-success-subtle text-success"><i class="bi bi-people-fill"></i></div>
+                <div>
+                    <div class="fs-3 fw-bold">{{ stats.clientes }}</div>
+                    <div class="text-muted small">Clientes</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-md-3">
+        <div class="card stat-card border-0 shadow-sm h-100">
+            <div class="card-body d-flex align-items-center gap-3">
+                <div class="stat-icon bg-warning-subtle text-warning"><i class="bi bi-truck"></i></div>
+                <div>
+                    <div class="fs-3 fw-bold">{{ stats.proveedores }}</div>
+                    <div class="text-muted small">Proveedores</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-md-3">
+        <div class="card stat-card border-0 shadow-sm h-100">
+            <div class="card-body d-flex align-items-center gap-3">
+                <div class="stat-icon bg-info-subtle text-info"><i class="bi bi-receipt"></i></div>
+                <div>
+                    <div class="fs-3 fw-bold">{{ stats.facturas }}</div>
+                    <div class="text-muted small">Facturas</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4">
+    <div class="col-lg-7">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-header bg-white border-0 pt-3">
+                <h5 class="mb-0"><i class="bi bi-clock-history"></i> Últimas facturas</h5>
+            </div>
+            <div class="card-body pt-0">
+                {% if recientes %}
+                <table class="table table-sm table-hover mb-0">
+                    <thead>
+                        <tr><th>ID</th><th>Cliente</th><th>Fecha</th><th>Cant.</th><th>Total</th><th></th></tr>
+                    </thead>
+                    <tbody>
+                        {% for f in recientes %}
+                        <tr>
+                            <td>{{ f[0] }}</td>
+                            <td>{{ f[1] }}</td>
+                            <td>{{ f[2] }}</td>
+                            <td>{{ f[4] }}</td>
+                            <td>${{ "%.2f"|format(f[3]) }}</td>
+                            <td><a href="{{ url_for('ver_factura', id=f[0]) }}" class="btn btn-sm btn-outline-info">Ver</a></td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {% else %}
+                <p class="text-muted mb-0">Todavía no hay facturas registradas.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-5">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-header bg-white border-0 pt-3">
+                <h5 class="mb-0"><i class="bi bi-lightning-charge-fill"></i> Accesos rápidos</h5>
+            </div>
+            <div class="card-body pt-0 d-grid gap-2">
+                <a href="{{ url_for('nuevo_producto') }}" class="btn btn-outline-primary text-start"><i class="bi bi-plus-circle me-2"></i>Nuevo vehículo</a>
+                <a href="{{ url_for('nuevo_cliente') }}" class="btn btn-outline-success text-start"><i class="bi bi-person-plus me-2"></i>Nuevo cliente</a>
+                <a href="{{ url_for('nuevo_proveedor') }}" class="btn btn-outline-warning text-start"><i class="bi bi-truck me-2"></i>Nuevo proveedor</a>
+                <a href="{{ url_for('nueva_factura') }}" class="btn btn-outline-info text-start"><i class="bi bi-receipt-cutoff me-2"></i>Generar factura</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% else %}
+{# ======================= PÁGINA PÚBLICA (sin iniciar sesión) ======================= #}
+
+<div class="hero rounded-4 p-5 mb-5 text-white text-center">
+    <h1 class="display-5 fw-bold mb-3">AutoDrive</h1>
+    <p class="lead mb-4">Sistema integral de gestión para concesionarios de vehículos:
+       control de inventario, clientes, proveedores y facturación en un solo lugar.</p>
+    <a href="{{ url_for('login') }}" class="btn btn-light btn-lg px-4"><i class="bi bi-box-arrow-in-right me-1"></i> Iniciar sesión</a>
+
+    <div class="d-flex justify-content-center flex-wrap gap-3 mt-5">
+        <div class="text-center">
+            <div class="hero-fleet-icon mx-auto mb-2"><i class="bi bi-car-front-fill"></i></div>
+            <div class="small opacity-75">Sedán</div>
+        </div>
+        <div class="text-center">
+            <div class="hero-fleet-icon mx-auto mb-2"><i class="bi bi-truck-front-fill"></i></div>
+            <div class="small opacity-75">SUV</div>
+        </div>
+        <div class="text-center">
+            <div class="hero-fleet-icon mx-auto mb-2"><i class="bi bi-truck"></i></div>
+            <div class="small opacity-75">Pickup</div>
+        </div>
+        <div class="text-center">
+            <div class="hero-fleet-icon mx-auto mb-2"><i class="bi bi-car-front"></i></div>
+            <div class="small opacity-75">Hatchback</div>
+        </div>
+        <div class="text-center">
+            <div class="hero-fleet-icon mx-auto mb-2"><i class="bi bi-speedometer2"></i></div>
+            <div class="small opacity-75">Deportivo</div>
+        </div>
+    </div>
+</div>
+
+<section class="mb-5">
+    <div class="row align-items-center g-4">
+        <div class="col-md-6">
+            <h2 class="h3 mb-3"><i class="bi bi-building text-primary"></i> Quiénes somos</h2>
+            <p class="text-muted">
+                AutoDrive es un sistema web desarrollado como proyecto académico para la gestión integral
+                de un concesionario de vehículos. Permite administrar el catálogo de vehículos, la cartera
+                de clientes, la red de proveedores y el proceso de facturación, todo con persistencia real
+                de datos y control de acceso mediante autenticación de usuarios.
+            </p>
+            <ul class="list-unstyled text-muted">
+                <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>Control de inventario de vehículos en tiempo real</li>
+                <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>Gestión de clientes y proveedores</li>
+                <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>Facturación con historial detallado</li>
+            </ul>
+        </div>
+        <div class="col-md-6">
+            <div class="ratio ratio-16x9 shadow rounded-4 overflow-hidden">
+                <video controls poster="" class="w-100 h-100" style="object-fit: cover;">
+                    <source src="https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4" type="video/mp4">
+                    Tu navegador no soporta video HTML5.
+                </video>
+            </div>
+            <p class="text-center text-muted small mt-2">Video referencial del sistema</p>
+        </div>
+    </div>
+</section>
+
+<section class="mb-5">
+    <h2 class="h3 text-center mb-4"><i class="bi bi-patch-check-fill text-primary"></i> Por qué elegirnos</h2>
+    <div class="row g-4 text-center">
+        <div class="col-md-3 col-6">
+            <div class="why-icon bg-primary-subtle text-primary mx-auto mb-2"><i class="bi bi-shield-check"></i></div>
+            <h6 class="mb-1">Vehículos garantizados</h6>
+            <p class="text-muted small mb-0">Inventario verificado y actualizado.</p>
+        </div>
+        <div class="col-md-3 col-6">
+            <div class="why-icon bg-success-subtle text-success mx-auto mb-2"><i class="bi bi-cash-coin"></i></div>
+            <h6 class="mb-1">Precios transparentes</h6>
+            <p class="text-muted small mb-0">Facturación clara, sin sorpresas.</p>
+        </div>
+        <div class="col-md-3 col-6">
+            <div class="why-icon bg-warning-subtle text-warning mx-auto mb-2"><i class="bi bi-truck"></i></div>
+            <h6 class="mb-1">Proveedores confiables</h6>
+            <p class="text-muted small mb-0">Red de proveedores respaldada.</p>
+        </div>
+        <div class="col-md-3 col-6">
+            <div class="why-icon bg-info-subtle text-info mx-auto mb-2"><i class="bi bi-headset"></i></div>
+            <h6 class="mb-1">Atención personalizada</h6>
+            <p class="text-muted small mb-0">Acompañamiento en cada compra.</p>
+        </div>
+    </div>
+</section>
+
+<section class="mb-5">
+    <h2 class="h3 text-center mb-4"><i class="bi bi-gear-wide-connected text-primary"></i> Nuestros servicios</h2>
+    <div class="row g-4">
+        <div class="col-md-3 col-6">
+            <div class="card h-100 border-0 shadow-sm text-center p-3 service-card">
+                <div class="service-icon bg-primary-subtle text-primary mx-auto mb-3"><i class="bi bi-car-front-fill"></i></div>
+                <h6>Gestión de Vehículos</h6>
+                <p class="text-muted small mb-0">Catálogo e inventario actualizado al instante.</p>
+            </div>
+        </div>
+        <div class="col-md-3 col-6">
+            <div class="card h-100 border-0 shadow-sm text-center p-3 service-card">
+                <div class="service-icon bg-success-subtle text-success mx-auto mb-3"><i class="bi bi-people-fill"></i></div>
+                <h6>Atención al Cliente</h6>
+                <p class="text-muted small mb-0">Registro y seguimiento de clientes.</p>
+            </div>
+        </div>
+        <div class="col-md-3 col-6">
+            <div class="card h-100 border-0 shadow-sm text-center p-3 service-card">
+                <div class="service-icon bg-warning-subtle text-warning mx-auto mb-3"><i class="bi bi-truck"></i></div>
+                <h6>Red de Proveedores</h6>
+                <p class="text-muted small mb-0">Vehículos relacionados a su proveedor de origen.</p>
+            </div>
+        </div>
+        <div class="col-md-3 col-6">
+            <div class="card h-100 border-0 shadow-sm text-center p-3 service-card">
+                <div class="service-icon bg-info-subtle text-info mx-auto mb-3"><i class="bi bi-receipt"></i></div>
+                <h6>Facturación</h6>
+                <p class="text-muted small mb-0">Generación y consulta de comprobantes de venta.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="mb-4">
+    <h2 class="h3 text-center mb-4"><i class="bi bi-geo-alt-fill text-primary"></i> Contáctanos</h2>
+    <div class="row g-4">
+        <div class="col-md-5">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <p class="mb-3"><i class="bi bi-envelope-fill text-primary me-2"></i><strong>Correo:</strong> contacto@autodrive.com</p>
+                    <p class="mb-3"><i class="bi bi-telephone-fill text-primary me-2"></i><strong>Teléfono:</strong> +593 99 123 4567</p>
+                    <p class="mb-0"><i class="bi bi-geo-alt-fill text-primary me-2"></i><strong>Ubicación:</strong> Puyo, Pastaza - Ecuador</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-7">
+            <div class="rounded-4 overflow-hidden shadow-sm" style="height: 220px;">
+                <iframe
+                    class="w-100 h-100 border-0"
+                    src="https://www.openstreetmap.org/export/embed.html?bbox=-78.00%2C-1.52%2C-77.92%2C-1.45&layer=mapnik&marker=-1.4868%2C-77.9926"
+                    loading="lazy">
+                </iframe>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endif %}
+{% endblock %}

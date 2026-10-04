@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% block title %}Factura #{{ factura[0] }} - AutoDrive{% endblock %}
+{% block content %}
+
+<h2 class="mb-4">Factura #{{ factura[0] }}</h2>
+
+<div class="card mb-4">
+    <div class="card-body">
+        <p><strong>Cliente:</strong> {{ factura[1] }}</p>
+        <p><strong>Correo:</strong> {{ factura[2] }}</p>
+        <p><strong>Fecha:</strong> {{ factura[3] }}</p>
+        <p class="mb-0"><strong>Total:</strong> ${{ "%.2f"|format(factura[4]) }}</p>
+    </div>
+</div>
+
+<h4>Detalle</h4>
+<table class="table table-bordered">
+    <thead class="table-dark">
+        <tr><th>Marca</th><th>Modelo</th><th>Cantidad</th><th>Subtotal</th></tr>
+    </thead>
+    <tbody>
+        {% for d in detalle %}
+        <tr>
+            <td>{{ d[0] }}</td>
+            <td>{{ d[1] }}</td>
+            <td>{{ d[2] }}</td>
+            <td>${{ "%.2f"|format(d[3]) }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<a href="{{ url_for('facturacion') }}" class="btn btn-secondary">Volver</a>
+
+{% endblock %}

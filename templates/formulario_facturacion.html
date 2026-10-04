@@ -1,0 +1,139 @@
+{% extends 'base.html' %}
+{% block title %}{% if modo == 'editar' %}Editar Factura{% else %}Nueva Factura{% endif %} - AutoDrive{% endblock %}
+{% block content %}
+
+<h2 class="mb-4"><i class="bi bi-receipt-cutoff"></i> {% if modo == 'editar' %}Editar Factura{% else %}Generar Factura{% endif %}</h2>
+
+<div class="row g-4">
+    <div class="col-lg-7">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body">
+                <form method="POST" novalidate id="form-factura">
+                    {{ form.hidden_tag() }}
+
+                    <div class="mb-3">
+                        {{ form.cliente_id.label(class="form-label") }}
+                        {{ form.cliente_id(class="form-select") }}
+                        {% for error in form.cliente_id.errors %}<div class="text-danger small">{{ error }}</div>{% endfor %}
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="producto_id" class="form-label">Vehículo</label>
+                        <select name="producto_id" id="producto_id" class="form-select">
+                            <option value="">-- Selecciona un vehículo --</option>
+                            {% for p in productos_info %}
+                            <option value="{{ p.id }}"
+                                    data-precio="{{ p.precio }}"
+                                    data-stock="{{ p.stock }}"
+                                    {% if form.producto_id.data == p.id %}selected{% endif %}>
+                                {{ p.marca }} {{ p.modelo }} — Stock: {{ p.stock }} — ${{ "%.2f"|format(p.precio) }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                        {% for error in form.producto_id.errors %}<div class="text-danger small">{{ error }}</div>{% endfor %}
+                    </div>
+
+                    <div class="mb-3">
+                        {{ form.cantidad.label(class="form-label") }}
+                        {{ form.cantidad(class="form-control", id="cantidad") }}
+                        <div id="aviso-stock" class="text-danger small mt-1" style="display:none;">
+                            <i class="bi bi-exclamation-triangle-fill"></i> La cantidad supera el stock disponible.
+                        </div>
+                        {% for error in form.cantidad.errors %}<div class="text-danger small">{{ error }}</div>{% endfor %}
+                    </div>
+
+                    <div id="aviso-bloqueo" class="alert alert-danger py-2" style="display:none;">
+                        <i class="bi bi-x-octagon-fill"></i>
+                        No se puede generar la factura: la cantidad supera el stock disponible.
+                    </div>
+
+                    <a href="{{ url_for('facturacion') }}" class="btn btn-secondary">Cancelar</a>
+                    {{ form.submit(class="btn btn-primary", id="btn-submit-factura") }}
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-5">
+        <div class="card border-0 shadow-sm bg-light">
+            <div class="card-header bg-white border-0 pt-3">
+                <h5 class="mb-0"><i class="bi bi-calculator-fill"></i> Resumen de la compra</h5>
+            </div>
+            <div class="card-body">
+                <div class="d-flex justify-content-between mb-2">
+                    <span class="text-muted">Número de vehículos</span>
+                    <strong id="resumen-cantidad">0</strong>
+                </div>
+                <div class="d-flex justify-content-between mb-2">
+                    <span class="text-muted">Valor por unidad</span>
+                    <strong id="resumen-unitario">$0.00</strong>
+                </div>
+                <hr>
+                <div class="d-flex justify-content-between fs-5">
+                    <span>Total</span>
+                    <strong id="resumen-total" class="text-primary">$0.00</strong>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+(function () {
+    const form = document.getElementById('form-factura');
+    const selectProducto = document.getElementById('producto_id');
+    const inputCantidad = document.getElementById('cantidad');
+    const avisoStock = document.getElementById('aviso-stock');
+    const avisoBloqueo = document.getElementById('aviso-bloqueo');
+    const btnSubmit = document.getElementById('btn-submit-factura');
+    const resumenCantidad = document.getElementById('resumen-cantidad');
+    const resumenUnitario = document.getElementById('resumen-unitario');
+    const resumenTotal = document.getElementById('resumen-total');
+
+    let excedeStock = false;
+
+    function actualizarResumen() {
+        const opcion = selectProducto.options[selectProducto.selectedIndex];
+        const precio = parseFloat(opcion ? opcion.dataset.precio : 0) || 0;
+        const stock = parseInt(opcion ? opcion.dataset.stock : 0) || 0;
+        const cantidad = parseInt(inputCantidad.value) || 0;
+        const total = precio * cantidad;
+
+        resumenCantidad.textContent = cantidad;
+        resumenUnitario.textContent = '$' + precio.toFixed(2);
+        resumenTotal.textContent = '$' + total.toFixed(2);
+
+        excedeStock = !!(cantidad > stock && opcion && opcion.value !== '' && cantidad > 0);
+
+        if (excedeStock) {
+            avisoStock.style.display = 'block';
+            avisoStock.innerHTML = '<i class="bi bi-exclamation-triangle-fill"></i> ' +
+                'Solo hay ' + stock + ' unidad(es) disponibles de este vehículo.';
+            btnSubmit.disabled = true;
+        } else {
+            avisoStock.style.display = 'none';
+            btnSubmit.disabled = false;
+        }
+    }
+
+    // Bloqueo real: si por cualquier motivo se intenta enviar el formulario
+    // mientras la cantidad supera el stock, se cancela el envío (no basta con
+    // deshabilitar el botón, por si el navegador permite enviar con Enter).
+    form.addEventListener('submit', function (event) {
+        actualizarResumen();
+        if (excedeStock) {
+            event.preventDefault();
+            avisoBloqueo.style.display = 'block';
+            avisoBloqueo.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        } else {
+            avisoBloqueo.style.display = 'none';
+        }
+    });
+
+    selectProducto.addEventListener('change', actualizarResumen);
+    inputCantidad.addEventListener('input', actualizarResumen);
+    actualizarResumen();
+})();
+</script>
+
+{% endblock %}
